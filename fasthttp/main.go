@@ -4,7 +4,6 @@ import (
 	"fmt"
 
 	"github.com/birowo/route"
-
 	"github.com/valyala/fasthttp"
 )
 
@@ -12,7 +11,7 @@ type Handle struct {
 	get, post route.Nodes[fasthttp.RequestHandler]
 }
 
-const Params uint8 = 0
+const Params = 0
 
 func (h *Handle) Handler(ctx *fasthttp.RequestCtx) {
 	var (
@@ -27,6 +26,7 @@ func (h *Handle) Handler(ctx *fasthttp.RequestCtx) {
 		v, params, prmsIdx = h.post.Get(ctx.Path())
 	default:
 		ctx.SetStatusCode(fasthttp.StatusMethodNotAllowed)
+		return
 	}
 	if v == nil {
 		ctx.SetStatusCode(fasthttp.StatusNotFound)
