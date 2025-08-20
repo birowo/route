@@ -5,7 +5,7 @@ import (
 	"unsafe"
 )
 
-const chrStSz = 126
+const chrStSz = 128
 
 type N[T any] struct {
 	Chr byte
@@ -48,7 +48,7 @@ func (ns *Nodes[T]) Set(str []byte, v T) {
 	}
 	i := 0
 	for i < strLen {
-		chr := str[i]
+		chr := str[i] & 0x7f
 		i++
 		if chr != ns[chr].Chr {
 			ns[chr].Chr = chr
@@ -63,7 +63,7 @@ func (ns *Nodes[T]) Set(str []byte, v T) {
 		}
 		if i < strLen && j < nsChrStrLen {
 			var ns_ Nodes[T]
-			chr_ := str[i]
+			chr_ := str[i] & 0x7f
 			ns_[chr_].Chr = chr_
 			ns_[chr_].Str, ns_[chr_].Nds, ns_[chr_].V = params(str[i+1:], v)
 			chr_ = ns[chr].Str[j]
@@ -98,7 +98,7 @@ func (ns *Nodes[T]) Get(str []byte) (v T, prms Params, prmsIdx int) {
 	}
 	i := 0
 	for i < strLen && ns != nil {
-		chr := str[i]
+		chr := str[i] & 0x7f
 		if ns[chr].Chr == chr {
 			i++
 			nsChrStr := []byte(ns[chr].Str)
