@@ -91,6 +91,18 @@ func (ns *Nodes[T]) Set(str []byte, v T) {
 		ns = ns[chr].Nds
 	}
 }
+func BsStr(str string) []byte {
+	type Str struct {
+		ptr uintptr
+		len int
+	}
+	type Bs struct {
+		ptr      uintptr
+		len, cap int
+	}
+	str_ := *(*Str)(unsafe.Pointer(&str))
+	return *(*[]byte)(unsafe.Pointer(&Bs{str_.ptr, str_.len, str_.len}))
+}
 func (ns *Nodes[T]) Get(str []byte) (v T, prms Params, prmsIdx int) {
 	strLen := len(str)
 	if strLen == 0 {
@@ -101,7 +113,7 @@ func (ns *Nodes[T]) Get(str []byte) (v T, prms Params, prmsIdx int) {
 		chr := str[i] & 0x7f
 		if ns[chr].Chr == chr {
 			i++
-			nsChrStr := []byte(ns[chr].Str)
+			nsChrStr := BsStr(ns[chr].Str)
 			end := i + len(nsChrStr)
 			if end > strLen {
 				return
@@ -121,7 +133,7 @@ func (ns *Nodes[T]) Get(str []byte) (v T, prms Params, prmsIdx int) {
 			}
 			prms[prmsIdx] = str[j:i]
 			prmsIdx++
-			nsChrStr := []byte(ns[':'].Str)
+			nsChrStr := BsStr(ns[':'].Str)
 			end := i + len(nsChrStr)
 			if end > strLen {
 				return
