@@ -42,5 +42,5 @@ func main() {
 	bs = regexp.MustCompile(
 		`{\s+"Chr": 0,\s+"Str"\: "",\s+"V"\: 0,\s+"Nds"\: null\s+},*\s+`,
 	).ReplaceAll(bs, nil)
-	println("tree:", route.StrBs(bs))
+	println("tree:", string(bs))
 }

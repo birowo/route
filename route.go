@@ -2,7 +2,6 @@ package route
 
 import (
 	"bytes"
-	"unsafe"
 )
 
 const chrStSz = 128
@@ -19,19 +18,16 @@ const prmsIdxMax = 64
 
 type Params [prmsIdxMax][]byte
 
-func StrBs(bs []byte) string {
-	return *(*string)(unsafe.Pointer(&bs))
-}
 func params[T any](str []byte, v T) (str_ string, ns *Nodes[T], v_ T) {
 	j := len(str)
 	for i := j - 1; i > -1; i-- {
 		if str[i] == ':' {
-			ns = &Nodes[T]{':': {':', StrBs(str[i+1 : j]), v, ns}}
+			ns = &Nodes[T]{':': {':', string(str[i+1 : j]), v, ns}}
 			j = i
 			v = v_
 		}
 	}
-	str_ = StrBs(str[:j])
+	str_ = string(str[:j])
 	v_ = v
 	return
 }
@@ -91,18 +87,6 @@ func (ns *Nodes[T]) Set(str []byte, v T) {
 		ns = ns[chr].Nds
 	}
 }
-func BsStr(str string) []byte {
-	type Str struct {
-		ptr uintptr
-		len int
-	}
-	type Bs struct {
-		ptr      uintptr
-		len, cap int
-	}
-	str_ := *(*Str)(unsafe.Pointer(&str))
-	return *(*[]byte)(unsafe.Pointer(&Bs{str_.ptr, str_.len, str_.len}))
-}
 func (ns *Nodes[T]) Get(str []byte) (v T, prms Params, prmsIdx int) {
 	strLen := len(str)
 	if strLen == 0 {
@@ -113,7 +97,7 @@ func (ns *Nodes[T]) Get(str []byte) (v T, prms Params, prmsIdx int) {
 		chr := str[i] & 0x7f
 		if ns[chr].Chr == chr {
 			i++
-			nsChrStr := BsStr(ns[chr].Str)
+			nsChrStr := []byte(ns[chr].Str)
 			end := i + len(nsChrStr)
 			if end > strLen {
 				return
@@ -133,7 +117,7 @@ func (ns *Nodes[T]) Get(str []byte) (v T, prms Params, prmsIdx int) {
 			}
 			prms[prmsIdx] = str[j:i]
 			prmsIdx++
-			nsChrStr := BsStr(ns[':'].Str)
+			nsChrStr := []byte(ns[':'].Str)
 			end := i + len(nsChrStr)
 			if end > strLen {
 				return
