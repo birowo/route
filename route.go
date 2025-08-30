@@ -33,13 +33,13 @@ func params[T any](str []byte, v T) (str_ string, ns *Nodes[T], v_ T) {
 }
 func (ns *Nodes[T]) Set(str []byte, v T) {
 	strLen := len(str)
-	prmsIdx := 0
+	prmsLen := 0
 	for i := range strLen {
 		if str[i] == ':' {
-			prmsIdx++
+			prmsLen++
 		}
 	}
-	if strLen == 0 || prmsIdx > prmsIdxMax {
+	if strLen == 0 || prmsLen > prmsIdxMax {
 		return
 	}
 	i := 0
@@ -87,7 +87,7 @@ func (ns *Nodes[T]) Set(str []byte, v T) {
 		ns = ns[chr].Nds
 	}
 }
-func (ns *Nodes[T]) Get(str []byte) (v T, prms Params, prmsIdx int) {
+func (ns *Nodes[T]) Get(str []byte) (v T, prms Params, prmsLen int) {
 	strLen := len(str)
 	if strLen == 0 {
 		return
@@ -115,8 +115,8 @@ func (ns *Nodes[T]) Get(str []byte) (v T, prms Params, prmsIdx int) {
 			for i < strLen && str[i] != '/' {
 				i++
 			}
-			prms[prmsIdx] = str[j:i]
-			prmsIdx++
+			prms[prmsLen] = str[j:i]
+			prmsLen++
 			nsChrStr := []byte(ns[':'].Str)
 			end := i + len(nsChrStr)
 			if end > strLen {
