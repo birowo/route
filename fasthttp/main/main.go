@@ -9,11 +9,11 @@ import (
 
 func main() {
 	r := new(fh.Handle)
-	r.GET([]byte("/a/:/b/:"), func(ctx *fasthttp.RequestCtx) {
+	r.GET("/a/:/b/:", func(ctx *fasthttp.RequestCtx) {
 		params := ctx.UserValue(fh.Params).([]string)
 		fmt.Fprintf(ctx, "params: %q", params)
 	})
-	r.POST([]byte("/a/:/b/:"), func(ctx *fasthttp.RequestCtx) {
+	r.POST("/a/:/b/:", func(ctx *fasthttp.RequestCtx) {
 		params := ctx.UserValue(fh.Params).([]string)
 		fmt.Fprintf(ctx, "params: %q\nbody: %s", params, ctx.PostBody())
 	})

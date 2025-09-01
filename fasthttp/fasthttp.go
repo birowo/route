@@ -33,9 +33,9 @@ func (h *Handle) Handler(ctx *fasthttp.RequestCtx) {
 	ctx.SetUserValue(Params, params[:prmsIdx])
 	v(ctx)
 }
-func (h *Handle) GET(path []byte, rh fasthttp.RequestHandler) {
-	h.get.Set(path, rh)
+func (h *Handle) GET(path string, rh fasthttp.RequestHandler) {
+	h.get.Set([]byte(path), rh)
 }
-func (h *Handle) POST(path []byte, rh fasthttp.RequestHandler) {
-	h.post.Set(path, rh)
+func (h *Handle) POST(path string, rh fasthttp.RequestHandler) {
+	h.post.Set([]byte(path), rh)
 }
