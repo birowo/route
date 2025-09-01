@@ -1,8 +1,6 @@
-package main
+package fasthttp
 
 import (
-	"fmt"
-
 	"github.com/birowo/route"
 	"github.com/valyala/fasthttp"
 )
@@ -40,17 +38,4 @@ func (h *Handle) GET(path []byte, rh fasthttp.RequestHandler) {
 }
 func (h *Handle) POST(path []byte, rh fasthttp.RequestHandler) {
 	h.post.Set(path, rh)
-}
-
-func main() {
-	r := new(Handle)
-	r.GET([]byte("/a/:/b/:"), func(ctx *fasthttp.RequestCtx) {
-		params := ctx.UserValue(Params).([]string)
-		fmt.Fprintf(ctx, "params: %q", params)
-	})
-	r.POST([]byte("/a/:/b/:"), func(ctx *fasthttp.RequestCtx) {
-		params := ctx.UserValue(Params).([]string)
-		fmt.Fprintf(ctx, "params: %q\nbody: %s", params, ctx.PostBody())
-	})
-	fasthttp.ListenAndServe(":8080", r.Handler)
 }
